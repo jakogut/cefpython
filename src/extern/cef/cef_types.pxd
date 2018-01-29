@@ -158,12 +158,12 @@ cdef extern from "include/internal/cef_types.h":
         PDE_TYPE_EMPTY  = 0,
         PDE_TYPE_BYTES,
         PDE_TYPE_FILE,
-        
+
     # WebRequest
     ctypedef enum cef_urlrequest_flags_t:
         UR_FLAG_NONE                      = 0,
         UR_FLAG_SKIP_CACHE                = 1 << 0,
-        UR_FLAG_ALLOW_CACHED_CREDENTIALS  = 1 << 1,
+        UR_FLAG_ALLOW_STORED_CREDENTIALS  = 1 << 2,
         UR_FLAG_REPORT_UPLOAD_PROGRESS    = 1 << 3,
         UR_FLAG_NO_DOWNLOAD_DATA          = 1 << 6,
         UR_FLAG_NO_RETRY_ON_5XX           = 1 << 7,
