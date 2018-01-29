@@ -63,21 +63,17 @@ cdef void SetCefWindowInfo(
                     <CefWindowHandle>windowInfo.parentWindowHandle,
                     windowName)
 
-    cdef cpp_bool transparent = bool(windowInfo.transparentPainting)
     if windowInfo.windowType == "offscreen":
         cefWindowInfo.SetAsWindowless(
-                <CefWindowHandle>windowInfo.parentWindowHandle,
-                transparent)
+                <CefWindowHandle>windowInfo.parentWindowHandle)
 
 cdef class WindowInfo:
     cdef public str windowType
     cdef public WindowHandle parentWindowHandle
     cdef public list windowRect # [left, top, right, bottom]
     cdef public py_string windowName
-    cdef public py_bool transparentPainting
 
     def __init__(self, title=""):
-        self.transparentPainting = False
         self.windowName = ""
         if title:
             self.windowName = title
@@ -132,7 +128,3 @@ cdef class WindowInfo:
                     % parentWindowHandle)
         self.parentWindowHandle = parentWindowHandle
         self.windowType = "offscreen"
-
-    cpdef py_void SetTransparentPainting(self,
-            py_bool transparentPainting):
-        self.transparentPainting = transparentPainting
