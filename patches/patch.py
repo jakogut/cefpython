@@ -9,16 +9,6 @@ OS_POSTFIX = ("win" if platform.system() == "Windows" else
               "linux" if platform.system() == "Linux" else
               "mac" if platform.system() == "Darwin" else "unknown")
 
-# ALL PLATFORMS
-# noinspection PyUnresolvedReferences
-patches.extend([
-    {
-        # Fixes HTTPS cache problems with private certificates
-        'name': 'issue125',
-        'path': '../net/http/'
-    },
-])
-
 # LINUX
 if OS_POSTFIX == "linux":
     # noinspection PyUnresolvedReferences
