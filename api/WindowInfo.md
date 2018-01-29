@@ -15,7 +15,6 @@ Table of contents:
   * [SetAsChild](#setaschild)
   * [SetAsPopup](#setaspopup)
   * [SetAsOffscreen](#setasoffscreen)
-  * [SetTransparentPainting](#settransparentpainting)
 
 ## Methods
 
@@ -72,13 +71,3 @@ value must be set to true.
 
 You can pass 0 as `parentWindowHandle`, but then some things like
 context menus and plugins may not display correctly.
-
-
-### SetTransparentPainting
-
-| Parameter | Type |
-| --- | --- |
-| transparentPainting | bool |
-| __Return__ | void |
-
-This method is intended for use with off-screen rendering only.
