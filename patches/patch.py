@@ -16,11 +16,6 @@ if OS_POSTFIX == "linux":
         {
             # Discovery of the "icudtl.dat" file fails on Linux.
             'name': 'issue231',
-            'path': './'
-        },
-        {
-            # Adds drag-image representation during drag & drop in OSR mode.
-            'name': 'issue251',
-            'path': './'
+            'path': 'cef/'
         },
     ])

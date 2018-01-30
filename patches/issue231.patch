@@ -1,8 +1,8 @@
 diff --git include/capi/cef_path_util_capi.h include/capi/cef_path_util_capi.h
-index de99ebd8..dd2f21c5 100644
+index e489894d..3bfc5cfc 100644
 --- include/capi/cef_path_util_capi.h
 +++ include/capi/cef_path_util_capi.h
-@@ -51,6 +51,16 @@ extern "C" {
+@@ -52,6 +52,16 @@ extern "C" {
  ///
  CEF_EXPORT int cef_get_path(cef_path_key_t key, cef_string_t* path);
  
@@ -40,10 +40,10 @@ index 552f4ba5..95af66ef 100644
 +
  #endif  // CEF_INCLUDE_CEF_PATH_UTIL_H_
 diff --git libcef/browser/path_util_impl.cc libcef/browser/path_util_impl.cc
-index 6a759309..ad620d7f 100644
+index e80e62ad..941823a8 100644
 --- libcef/browser/path_util_impl.cc
 +++ libcef/browser/path_util_impl.cc
-@@ -51,3 +51,38 @@ bool CefGetPath(PathKey key, CefString& path) {
+@@ -54,3 +54,38 @@ bool CefGetPath(PathKey key, CefString& path) {
  
    return false;
  }
@@ -83,10 +83,10 @@ index 6a759309..ad620d7f 100644
 +  return PathService::Override(pref_key, file_path);
 +}
 diff --git libcef_dll/libcef_dll.cc libcef_dll/libcef_dll.cc
-index 096eede2..05ecf9bd 100644
+index 8ee5a552..5cf48ffa 100644
 --- libcef_dll/libcef_dll.cc
 +++ libcef_dll/libcef_dll.cc
-@@ -959,6 +959,23 @@ CEF_EXPORT int cef_get_path(cef_path_key_t key, cef_string_t* path) {
+@@ -958,6 +958,23 @@ CEF_EXPORT int cef_get_path(cef_path_key_t key, cef_string_t* path) {
    return _retval;
  }
  
@@ -111,11 +111,11 @@ index 096eede2..05ecf9bd 100644
    // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
  
 diff --git libcef_dll/wrapper/libcef_dll_wrapper.cc libcef_dll/wrapper/libcef_dll_wrapper.cc
-index 15026ab5..a3d21052 100644
+index f5193dfd..2eba555d 100644
 --- libcef_dll/wrapper/libcef_dll_wrapper.cc
 +++ libcef_dll/wrapper/libcef_dll_wrapper.cc
-@@ -880,6 +880,23 @@ CEF_GLOBAL bool CefGetPath(PathKey key, CefString& path) {
-   return _retval?true:false;
+@@ -881,6 +881,23 @@ CEF_GLOBAL bool CefGetPath(PathKey key, CefString& path) {
+   return _retval ? true : false;
  }
  
 +CEF_GLOBAL bool CefOverridePath(PathKey key, const CefString& path) {
