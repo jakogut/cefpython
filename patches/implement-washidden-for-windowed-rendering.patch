@@ -1,0 +1,44 @@
+diff --git libcef/browser/browser_host_impl.cc libcef/browser/browser_host_impl.cc
+index 8ecc5fca..d0d0b7b6 100644
+--- libcef/browser/browser_host_impl.cc
++++ libcef/browser/browser_host_impl.cc
+@@ -1080,11 +1080,6 @@ void CefBrowserHostImpl::WasResized() {
+ }
+ 
+ void CefBrowserHostImpl::WasHidden(bool hidden) {
+-  if (!IsWindowless()) {
+-    NOTREACHED() << "Window rendering is not disabled";
+-    return;
+-  }
+-
+   if (!CEF_CURRENTLY_ON_UIT()) {
+     CEF_POST_TASK(CEF_UIT,
+                   base::Bind(&CefBrowserHost::WasHidden, this, hidden));
+diff --git libcef/browser/browser_platform_delegate.cc libcef/browser/browser_platform_delegate.cc
+index c247d7d3..c0ed5a77 100644
+--- libcef/browser/browser_platform_delegate.cc
++++ libcef/browser/browser_platform_delegate.cc
+@@ -11,6 +11,7 @@
+ #include "content/browser/renderer_host/render_widget_host_impl.h"
+ #include "content/public/browser/render_view_host.h"
+ #include "content/public/browser/render_widget_host.h"
++#include "ui/views/widget/widget.h"
+ 
+ CefBrowserPlatformDelegate::CefBrowserPlatformDelegate() : browser_(nullptr) {}
+ 
+@@ -110,7 +111,15 @@ CefBrowserPlatformDelegate::CreateJavaScriptDialogRunner() {
+ }
+ 
+ void CefBrowserPlatformDelegate::WasHidden(bool hidden) {
++#if defined(USE_AURA)
++  if (hidden) {
++    GetWindowWidget()->Hide();
++  } else {
++    GetWindowWidget()->Show();
++  }
++#else
+   NOTREACHED();
++#endif
+ }
+ 
+ void CefBrowserPlatformDelegate::NotifyScreenInfoChanged() {

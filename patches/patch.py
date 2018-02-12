@@ -18,4 +18,8 @@ if OS_POSTFIX == "linux":
             'name': 'issue231',
             'path': 'cef/'
         },
+        {
+            'name': 'implement-washidden-for-windowed-rendering',
+            'path': 'cef/'
+        },
     ])
