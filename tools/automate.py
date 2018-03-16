@@ -959,7 +959,7 @@ def run_automate_git():
 
     # On Windows automate-git.py must be run using Python 2.7
     # from depot_tools. depot_tools should already be added to PATH.
-    python = "python"  # *do not* replace with sys.executable!
+    python = "python2"  # *do not* replace with sys.executable!
     args = " ".join(args)
     command = script + " " + args
     working_dir = Options.cef_build_dir
