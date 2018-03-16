@@ -870,8 +870,8 @@ def getenv():
     # GN configuration
     env["CEF_USE_GN"] = "1"
     # Issue #73 patch applied here with "use_allocator=none"
-    env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=1 use_jumbo_build=true"
-    # env["GN_DEFINES"] += " use_gtk3=false"
+    env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=0 use_jumbo_build=true"
+    env["GN_DEFINES"] += " enable_pdf=false use_gconf=false use_gtk3=true use_cups=false"
     # To perform an official build set GYP_DEFINES=buildtype=Official.
     # This will disable debugging code and enable additional link-time
     # optimizations in Release builds.
