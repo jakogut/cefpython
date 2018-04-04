@@ -7,10 +7,6 @@
 #include "common/cefpython_public_api.h"
 #include "include/cef_dialog_handler.h"
 
-#if defined(OS_LINUX)
-#include "dialog_handler_gtk.h"
-#endif
-
 
 class DialogHandler : public CefDialogHandler
 {
@@ -28,10 +24,6 @@ public:
                       override;
 
 public:
-#if defined(OS_LINUX)
-    // Default dialog handler impl for GTK.
-    CefRefPtr<ClientDialogHandlerGtk> dialog_handler_;
-#endif
 
 private:
     IMPLEMENT_REFCOUNTING(DialogHandler);
