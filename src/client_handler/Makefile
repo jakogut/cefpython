@@ -12,7 +12,7 @@ UNAME_S = $(shell uname -s)
 CCFLAGS = -fPIC $(CEF_CCFLAGS)
 
 ifeq ($(UNAME_S), Linux)
-	SRC_MORE = x11.cpp dialog_handler_gtk.cpp
+	SRC_MORE = x11.cpp
 else ifeq ($(UNAME_S), Darwin)
 	SRC_MORE = util_mac.mm
 endif
@@ -32,24 +32,13 @@ OBJ = $(filter %.o, $(SRC:.cpp=.o) $(SRC:.mm=.o))
 OUT = libclient_handler.a
 
 INC = -I./../ -I./../common/ -I$(PYTHON_INCLUDE) \
-	-I/usr/include/gtk-2.0 \
-	-I/usr/include/gtk-unix-print-2.0 \
 	-I/usr/include/glib-2.0 \
 	-I/usr/include/cairo \
 	-I/usr/include/pango-1.0 \
-	-I/usr/include/gdk-pixbuf-2.0 \
 	-I/usr/include/atk-1.0 \
-	-I/usr/lib/x86_64-linux-gnu/gtk-2.0/include \
-	-I/usr/lib/x86_64-linux-gnu/gtk-unix-print-2.0 \
 	-I/usr/lib/x86_64-linux-gnu/glib-2.0/include \
-	-I/usr/lib/i386-linux-gnu/gtk-2.0/include \
-	-I/usr/lib/i386-linux-gnu/gtk-unix-print-2.0 \
 	-I/usr/lib/i386-linux-gnu/glib-2.0/include \
-	-I/usr/lib64/gtk-2.0/include \
-	-I/usr/lib64/gtk-unix-print-2.0 \
 	-I/usr/lib64/glib-2.0/include \
-	-I/usr/lib/gtk-2.0/include \
-	-I/usr/lib/gtk-2.0/gtk-unix-print-2.0 \
 	-I/usr/lib/glib-2.0/include
 
 
