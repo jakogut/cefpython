@@ -291,45 +291,27 @@ def get_include_dirs():
         include_dirs.extend(common_include_dirs)
         # TODO: Check these directories, are these really required on Mac?
         include_dirs.extend([
-            '/usr/include/gtk-2.0',
             '/usr/include/glib-2.0',
-            '/usr/include/gtk-unix-print-2.0',
             '/usr/include/cairo',
             '/usr/include/pango-1.0',
-            '/usr/include/gdk-pixbuf-2.0',
             '/usr/include/atk-1.0',
             # Fedora
-            '/usr/lib64/gtk-2.0/include',
-            '/usr/lib64/gtk-unix-print-2.0',
             '/usr/lib64/glib-2.0/include',
-            '/usr/lib/gtk-2.0/include',
-            '/usr/lib/gtk-2.0/gtk-unix-print-2.0',
             '/usr/lib/glib-2.0/include',
         ])
     elif LINUX:
         include_dirs.extend([LINUX_DIR])
         include_dirs.extend(common_include_dirs)
         include_dirs.extend([
-            '/usr/include/gtk-2.0',
             '/usr/include/glib-2.0',
-            '/usr/include/gtk-unix-print-2.0',
             '/usr/include/cairo',
             '/usr/include/pango-1.0',
-            '/usr/include/gdk-pixbuf-2.0',
             '/usr/include/atk-1.0',
             # Ubuntu
-            '/usr/lib/x86_64-linux-gnu/gtk-2.0/include',
-            '/usr/lib/x86_64-linux-gnu/gtk-unix-print-2.0',
             '/usr/lib/x86_64-linux-gnu/glib-2.0/include',
-            '/usr/lib/i386-linux-gnu/gtk-2.0/include',
-            '/usr/lib/i386-linux-gnu/gtk-unix-print-2.0',
             '/usr/lib/i386-linux-gnu/glib-2.0/include',
             # Fedora
-            '/usr/lib64/gtk-2.0/include',
-            '/usr/lib64/gtk-unix-print-2.0',
             '/usr/lib64/glib-2.0/include',
-            '/usr/lib/gtk-2.0/include',
-            '/usr/lib/gtk-2.0/gtk-unix-print-2.0',
             '/usr/lib/glib-2.0/include',
         ])
     return include_dirs
@@ -386,10 +368,6 @@ def get_libraries():
             "X11",
             "gobject-2.0",
             "glib-2.0",
-            "gtk-x11-2.0",
-            "gdk-x11-2.0",
-            # "gdk_pixbuf-2.0",
-            # "gdk_pixbuf_xlib-2.0",
             # CEF and CEF Python libraries
             "cef_dll_wrapper",
             "cefpythonapp",
