@@ -13,6 +13,13 @@ void DisplayHandler::OnAddressChange(CefRefPtr<CefBrowser> browser,
     DisplayHandler_OnAddressChange(browser, frame, url);
 }
 
+void DisplayHandler::OnLoadingProgressChange(CefRefPtr<CefBrowser> browser,
+				            double progress)
+{
+	REQUIRE_UI_THREAD();
+	DisplayHandler_OnLoadingProgressChange(browser, progress);
+}
+
 
 void DisplayHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title)

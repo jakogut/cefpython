@@ -18,6 +18,9 @@ public:
                          CefRefPtr<CefFrame> frame,
                          const CefString& url) override;
 
+    void OnLoadingProgressChange(CefRefPtr<CefBrowser> browser,
+			      double progress) override;
+
     void OnTitleChange(CefRefPtr<CefBrowser> browser,
                        const CefString& title) override;
 
