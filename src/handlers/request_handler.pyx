@@ -250,6 +250,66 @@ cdef public cpp_bool RequestHandler_GetAuthCredentials(
         sys.excepthook(exc_type, exc_value, exc_trace)
 
 
+cdef public cpp_bool RequestHandler_CanGetCookies(
+        CefRefPtr[CefBrowser] cefBrowser,
+        CefRefPtr[CefFrame] cefFrame,
+        CefRefPtr[CefRequest] cefRequest
+        ) except * with gil:
+    cdef PyBrowser pyBrowser
+    cdef PyFrame pyFrame
+    cdef PyRequest pyRequest
+    cdef object clientCallback
+
+    try:
+        pyBrowser = GetPyBrowser(cefBrowser, "CanGetCookies")
+        pyFrame = GetPyFrame(cefFrame)
+        pyRequest = CreatePyRequest(cefRequest)
+        clientCallback = pyBrowser.GetClientCallback("CanGetCookies")
+        if clientCallback:
+            returnValue = clientCallback(
+                    browser=pyBrowser,
+                    frame=pyFrame,
+                    request=pyRequest)
+            return bool(returnValue)
+        else:
+            return True
+    except:
+        (exc_type, exc_value, exc_trace) = sys.exc_info()
+        sys.excepthook(exc_type, exc_value, exc_trace)
+
+
+cdef public cpp_bool RequestHandler_CanSetCookie(
+        CefRefPtr[CefBrowser] cefBrowser,
+        CefRefPtr[CefFrame] cefFrame,
+        CefRefPtr[CefRequest] cefRequest,
+        const CefCookie& cookie
+        ) except * with gil:
+    cdef PyBrowser pyBrowser
+    cdef PyFrame pyFrame
+    cdef PyRequest pyRequest
+    cdef PyCookie pyCookie
+    cdef object clientCallback
+
+    try:
+        pyBrowser = GetPyBrowser(cefBrowser, "CanSetCookie")
+        pyFrame = GetPyFrame(cefFrame)
+        pyRequest = CreatePyRequest(cefRequest)
+        pyCookie = CreatePyCookie(cookie)
+        clientCallback = pyBrowser.GetClientCallback("CanSetCookie")
+        if clientCallback:
+            returnValue = clientCallback(
+                    browser=pyBrowser,
+                    frame=pyFrame,
+                    request=pyRequest,
+                    cookie=pyCookie)
+            return bool(returnValue)
+        else:
+            return True
+    except:
+        (exc_type, exc_value, exc_trace) = sys.exc_info()
+        sys.excepthook(exc_type, exc_value, exc_trace)
+
+
 cdef public cpp_bool RequestHandler_OnQuotaRequest(
         CefRefPtr[CefBrowser] cefBrowser,
         const CefString& cefOriginUrl,

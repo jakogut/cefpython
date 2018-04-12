@@ -45,6 +45,15 @@ public:
                             const CefString& scheme,
                             CefRefPtr<CefAuthCallback> callback) override;
 
+    bool CanGetCookies(CefRefPtr<CefBrowser> browser,
+		       CefRefPtr<CefFrame> frame,
+		       CefRefPtr<CefRequest> request) override;
+
+    bool CanSetCookie(CefRefPtr<CefBrowser> browser,
+		      CefRefPtr<CefFrame> frame,
+		      CefRefPtr<CefRequest> request,
+		      const CefCookie& cookie) override;
+
     bool OnQuotaRequest(CefRefPtr<CefBrowser> browser,
                         const CefString& origin_url,
                         int64 new_size,

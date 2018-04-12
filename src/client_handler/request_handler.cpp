@@ -68,6 +68,22 @@ bool RequestHandler::GetAuthCredentials(CefRefPtr<CefBrowser> browser,
                                              port, realm, scheme, callback);
 }
 
+bool RequestHandler::CanGetCookies(CefRefPtr<CefBrowser> browser,
+				   CefRefPtr<CefFrame> frame,
+				   CefRefPtr<CefRequest> request)
+{
+	REQUIRE_IO_THREAD();
+	return RequestHandler_CanGetCookies(browser, frame, request);
+}
+
+bool RequestHandler::CanSetCookie(CefRefPtr<CefBrowser> browser,
+				  CefRefPtr<CefFrame> frame,
+				  CefRefPtr<CefRequest> request,
+				  const CefCookie& cookie)
+{
+	REQUIRE_IO_THREAD();
+	return RequestHandler_CanSetCookie(browser, frame, request, cookie);
+}
 
 bool RequestHandler::OnQuotaRequest(CefRefPtr<CefBrowser> browser,
                                     const CefString& origin_url,
