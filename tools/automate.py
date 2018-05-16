@@ -871,7 +871,7 @@ def getenv():
     env["CEF_USE_GN"] = "1"
     # Issue #73 patch applied here with "use_allocator=none"
     env["GN_DEFINES"] = "use_sysroot=false use_allocator=none symbol_level=0 use_jumbo_build=true"
-    env["GN_DEFINES"] += " use_vaapi=true proprietary_codecs=true"
+    env["GN_DEFINES"] += " use_vaapi=true proprietary_codecs=true ffmpeg_branding=Chrome"
     env["GN_DEFINES"] += " use_gtk3=true use_cups=false use_gnome_keyring=false"
     env["GN_DEFINES"] += " enable_reporting=false enable_remoting=false enable_nacl=false"
     # To perform an official build set GYP_DEFINES=buildtype=Official.
