@@ -59,6 +59,7 @@ cdef public cpp_bool RequestHandler_OnBeforeBrowse(
         CefRefPtr[CefBrowser] cefBrowser,
         CefRefPtr[CefFrame] cefFrame,
         CefRefPtr[CefRequest] cefRequest,
+        cpp_bool cefIsUserGesture,
         cpp_bool cefIsRedirect
         ) except * with gil:
     cdef PyBrowser pyBrowser
