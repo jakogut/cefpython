@@ -22,7 +22,10 @@ cdef public void V8ContextHandler_OnContextCreated(
         Debug("V8ContextHandler_OnContextCreated()")
         pyBrowser = GetPyBrowser(cefBrowser, "OnContextCreated")
         pyBrowser.SetUserData("__v8ContextCreated", True)
-        pyFrame = GetPyFrame(cefFrame)
+        if cefFrame.get():
+            pyFrame = GetPyFrame(cefFrame)
+        else:
+            pyFrame = None
         # User defined callback.
         clientCallback = pyBrowser.GetClientCallback("OnContextCreated")
         if clientCallback:
