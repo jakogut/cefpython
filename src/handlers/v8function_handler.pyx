@@ -20,7 +20,10 @@ cdef public void V8FunctionHandler_Execute(
     cdef py_string jsErrorMessage
     try:
         pyBrowser = GetPyBrowser(cefBrowser, "V8FunctionHandler_Execute")
-        pyFrame = GetPyFrame(cefFrame)
+        if cefFrame.get():
+            pyFrame = GetPyFrame(cefFrame)
+        else:
+            return
         functionName = CefToPyString(cefFunctionName)
         Debug("V8FunctionHandler_Execute(): functionName=%s" % functionName)
         jsBindings = pyBrowser.GetJavascriptBindings()
