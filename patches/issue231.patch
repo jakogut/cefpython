@@ -80,7 +80,7 @@ index e80e62ad..941823a8 100644
 +  }
 +
 +  base::FilePath file_path = base::FilePath(path);
-+  return PathService::Override(pref_key, file_path);
++  return base::PathService::Override(pref_key, file_path);
 +}
 diff --git libcef_dll/libcef_dll.cc libcef_dll/libcef_dll.cc
 index 8ee5a552..5cf48ffa 100644
