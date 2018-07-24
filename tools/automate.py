@@ -870,10 +870,11 @@ def getenv():
     # GN configuration
     env["CEF_USE_GN"] = "1"
     # Issue #73 patch applied here with "use_allocator=none"
-    env["GN_DEFINES"] = "use_sysroot=false use_allocator=none symbol_level=0 use_jumbo_build=true"
-    env["GN_DEFINES"] += " use_vaapi=true proprietary_codecs=true ffmpeg_branding=Chrome"
-    env["GN_DEFINES"] += " use_gtk3=true use_cups=false use_gnome_keyring=false"
-    env["GN_DEFINES"] += " enable_reporting=false enable_remoting=false enable_nacl=false"
+    env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=0 arm_float_abi=hard"
+    env["GN_DEFINES"] += " angle_enable_vulkan=false angle_enable_vulkan_validation_layers=false"
+    env["GN_DEFINES"] += " use_vaapi=false proprietary_codecs=true ffmpeg_branding=Chrome"
+    env["GN_DEFINES"] += " use_gtk3=true use_cups=false use_gnome_keyring=false use_lld=true is_clang=true"
+    env["GN_DEFINES"] += " enable_reporting=false enable_remoting=false enable_nacl=false enable_vulkan=false v8_use_snapshot=false"
     # To perform an official build set GYP_DEFINES=buildtype=Official.
     # This will disable debugging code and enable additional link-time
     # optimizations in Release builds.
@@ -935,8 +936,9 @@ def run_automate_git():
         ninja -v -j2 -Cout\Release cefclient
     """
     args = []
-    if ARCH64 and not Options.x86:
-        args.append("--x64-build")
+    #if ARCH64 and not Options.x86:
+    #    args.append("--x64-build")
+    args.append('--arm-build')
     args.append("--download-dir=" + Options.cef_build_dir)
     args.append("--branch=" + Options.cef_branch)
     if Options.release_build:
