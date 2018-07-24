@@ -1,0 +1,15 @@
+diff --git tools/make_distrib.py tools/make_distrib.py
+index 7f67b55f..f29049c9 100644
+--- tools/make_distrib.py
++++ tools/make_distrib.py
+@@ -974,8 +974,8 @@ elif platform == 'linux':
+       {'path': 'natives_blob.bin'},
+       {'path': 'snapshot_blob.bin', 'conditional': True},
+       {'path': 'v8_context_snapshot.bin', 'conditional': True},
+-      {'path': 'swiftshader/libEGL.so'},
+-      {'path': 'swiftshader/libGLESv2.so'},
++      {'path': 'swiftshader/libEGL.so', 'conditional': True},
++      {'path': 'swiftshader/libGLESv2.so', 'conditional': True},
+   ]
+   # yapf: enable
+ 
