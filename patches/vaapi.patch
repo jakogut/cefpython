@@ -1,12 +1,12 @@
 diff --git chrome/browser/about_flags.cc chrome/browser/about_flags.cc
-index 6d77a44a2c83..f3d680b87774 100644
+index 10bda7b8b379..b5cb47dd8142 100644
 --- chrome/browser/about_flags.cc
 +++ chrome/browser/about_flags.cc
-@@ -1249,12 +1249,14 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -1241,12 +1241,14 @@ const FeatureEntry kFeatureEntries[] = {
+     {"ui-disable-partial-swap", flag_descriptions::kUiPartialSwapName,
       flag_descriptions::kUiPartialSwapDescription, kOsAll,
       SINGLE_DISABLE_VALUE_TYPE(switches::kUIDisablePartialSwap)},
- #if BUILDFLAG(ENABLE_WEBRTC)
-+#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
++#if defined(OS_CHROMEOS) || defined (OS_ANDROID)
      {"disable-webrtc-hw-decoding", flag_descriptions::kWebrtcHwDecodingName,
       flag_descriptions::kWebrtcHwDecodingDescription, kOsAndroid | kOsCrOS,
       SINGLE_DISABLE_VALUE_TYPE(switches::kDisableWebRtcHWDecoding)},
@@ -17,7 +17,7 @@ index 6d77a44a2c83..f3d680b87774 100644
      {"enable-webrtc-hw-h264-encoding",
       flag_descriptions::kWebrtcHwH264EncodingName,
       flag_descriptions::kWebrtcHwH264EncodingDescription, kOsAndroid | kOsCrOS,
-@@ -1577,6 +1579,13 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -1575,6 +1577,13 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kShowTouchHudDescription, kOsCrOS,
       SINGLE_VALUE_TYPE(ash::switches::kAshTouchHud)},
  #endif  // OS_CHROMEOS
@@ -31,7 +31,7 @@ index 6d77a44a2c83..f3d680b87774 100644
      {
          "disable-accelerated-video-decode",
          flag_descriptions::kAcceleratedVideoDecodeName,
-@@ -1584,6 +1593,7 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -1582,6 +1591,7 @@ const FeatureEntry kFeatureEntries[] = {
          kOsMac | kOsWin | kOsCrOS | kOsAndroid,
          SINGLE_DISABLE_VALUE_TYPE(switches::kDisableAcceleratedVideoDecode),
      },
@@ -39,7 +39,7 @@ index 6d77a44a2c83..f3d680b87774 100644
  #if defined(OS_WIN)
      {"enable-hdr", flag_descriptions::kEnableHDRName,
       flag_descriptions::kEnableHDRDescription, kOsWin,
-@@ -2274,12 +2284,17 @@ const FeatureEntry kFeatureEntries[] = {
+@@ -2260,12 +2270,17 @@ const FeatureEntry kFeatureEntries[] = {
       FEATURE_VALUE_TYPE(features::kOpenVR)},
  #endif  // ENABLE_OPENVR
  #endif  // ENABLE_VR
@@ -60,7 +60,7 @@ index 6d77a44a2c83..f3d680b87774 100644
       flag_descriptions::kV8CacheOptionsDescription, kOsAll,
       MULTI_VALUE_TYPE(kV8CacheOptionsChoices)},
 diff --git chrome/browser/chromeos/login/chrome_restart_request.cc chrome/browser/chromeos/login/chrome_restart_request.cc
-index 062c9e415214..7f002b1ef3f8 100644
+index 46b0ce4c204f..962e426fb12a 100644
 --- chrome/browser/chromeos/login/chrome_restart_request.cc
 +++ chrome/browser/chromeos/login/chrome_restart_request.cc
 @@ -19,6 +19,7 @@
@@ -86,17 +86,19 @@ index 062c9e415214..7f002b1ef3f8 100644
      ::switches::kDisableBlinkFeatures,
      ::switches::kDisableCastStreamingHWEncoding,
      ::switches::kDisableGpu,
-@@ -162,7 +168,7 @@ void DeriveCommandLine(const GURL& start_url,
+@@ -158,8 +164,10 @@ void DeriveCommandLine(const GURL& start_url,
      ::switches::kDisableWebGLImageChromium,
      ::switches::kEnableWebGLImageChromium,
      ::switches::kEnableWebVR,
--#if BUILDFLAG(ENABLE_WEBRTC)
-+#if BUILDFLAG(ENABLE_WEBRTC) && (defined(OS_CHROMEOS) || defined(OS_ANDROID))
++#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
      ::switches::kDisableWebRtcHWDecoding,
      ::switches::kDisableWebRtcHWEncoding,
- #endif
++#endif
+     ::switches::kOzonePlatform,
+     ash::switches::kAshEnableTabletMode,
+     ash::switches::kAshEnableWaylandServer,
 diff --git chrome/browser/flag_descriptions.cc chrome/browser/flag_descriptions.cc
-index 58caac5267be..1692d50e03c9 100644
+index f4b60cdab74a..b1c84cb84768 100644
 --- chrome/browser/flag_descriptions.cc
 +++ chrome/browser/flag_descriptions.cc
 @@ -14,6 +14,13 @@ const char kAccelerated2dCanvasDescription[] =
@@ -113,7 +115,7 @@ index 58caac5267be..1692d50e03c9 100644
  const char kAcceleratedVideoDecodeName[] = "Hardware-accelerated video decode";
  const char kAcceleratedVideoDecodeDescription[] =
      "Hardware-accelerated video decode where available.";
-@@ -1737,6 +1744,7 @@ const char kWebrtcEchoCanceller3Name[] = "WebRTC Echo Canceller 3.";
+@@ -1845,6 +1852,7 @@ const char kWebrtcEchoCanceller3Name[] = "WebRTC Echo Canceller 3.";
  const char kWebrtcEchoCanceller3Description[] =
      "Experimental WebRTC echo canceller (AEC3).";
  
@@ -121,7 +123,7 @@ index 58caac5267be..1692d50e03c9 100644
  const char kWebrtcHwDecodingName[] = "WebRTC hardware video decoding";
  const char kWebrtcHwDecodingDescription[] =
      "Support in WebRTC for decoding video streams using platform hardware.";
-@@ -1744,6 +1752,7 @@ const char kWebrtcHwDecodingDescription[] =
+@@ -1852,6 +1860,7 @@ const char kWebrtcHwDecodingDescription[] =
  const char kWebrtcHwEncodingName[] = "WebRTC hardware video encoding";
  const char kWebrtcHwEncodingDescription[] =
      "Support in WebRTC for encoding video streams using platform hardware.";
@@ -129,7 +131,7 @@ index 58caac5267be..1692d50e03c9 100644
  
  const char kWebrtcHwH264EncodingName[] = "WebRTC hardware h264 video encoding";
  const char kWebrtcHwH264EncodingDescription[] =
-@@ -2585,14 +2594,16 @@ const char kTabStripKeyboardFocusDescription[] =
+@@ -2659,14 +2668,16 @@ const char kTabStripKeyboardFocusDescription[] =
  
  // Chrome OS -------------------------------------------------------------------
  
@@ -148,7 +150,7 @@ index 58caac5267be..1692d50e03c9 100644
  const char kAllowTouchpadThreeFingerClickDescription[] =
      "Enables touchpad three-finger-click as middle button.";
 diff --git chrome/browser/flag_descriptions.h chrome/browser/flag_descriptions.h
-index 47cc2cff4e6f..9efab8c6d4ad 100644
+index de5079e304df..0ff54df06860 100644
 --- chrome/browser/flag_descriptions.h
 +++ chrome/browser/flag_descriptions.h
 @@ -37,6 +37,10 @@ namespace flag_descriptions {
@@ -162,7 +164,7 @@ index 47cc2cff4e6f..9efab8c6d4ad 100644
  extern const char kAcceleratedVideoDecodeName[];
  extern const char kAcceleratedVideoDecodeDescription[];
  
-@@ -1586,13 +1590,17 @@ extern const char kPermissionPromptPersistenceToggleDescription[];
+@@ -1627,13 +1631,17 @@ extern const char kPermissionPromptPersistenceToggleDescription[];
  
  #endif  // defined(OS_MACOSX)
  
@@ -184,39 +186,40 @@ index 47cc2cff4e6f..9efab8c6d4ad 100644
  extern const char kAllowTouchpadThreeFingerClickDescription[];
  
 diff --git content/browser/gpu/compositor_util.cc content/browser/gpu/compositor_util.cc
-index 7af077187197..e4faf0e8d763 100644
+index db3b66067708..4044ad0082c9 100644
 --- content/browser/gpu/compositor_util.cc
 +++ content/browser/gpu/compositor_util.cc
-@@ -124,7 +124,11 @@ const GpuFeatureData GetGpuFeatureData(size_t index, bool* eof) {
+@@ -149,7 +149,11 @@ const GpuFeatureData GetGpuFeatureData(
        {"video_decode",
-        SafeGetFeatureStatus(manager,
+        SafeGetFeatureStatus(gpu_feature_info,
                              gpu::GPU_FEATURE_TYPE_ACCELERATED_VIDEO_DECODE),
 +#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
 +       !command_line.HasSwitch(switches::kEnableAcceleratedVideo),
 +#else
         command_line.HasSwitch(switches::kDisableAcceleratedVideoDecode),
 +#endif
-        "Accelerated video decode has been disabled, either via blacklist,"
-        " about:flags or the command line.",
-        true},
+        "Accelerated video decode has been disabled, either via blacklist, "
+        "about:flags or the command line.",
+        true, true},
 diff --git content/browser/gpu/gpu_process_host.cc content/browser/gpu/gpu_process_host.cc
-index c68ef4f4382e..a02970b0f1df 100644
+index 72708d0f0c74..5470b5f2f404 100644
 --- content/browser/gpu/gpu_process_host.cc
 +++ content/browser/gpu/gpu_process_host.cc
-@@ -134,7 +134,7 @@ static const char* const kSwitchNames[] = {
+@@ -185,7 +185,9 @@ static const char* const kSwitchNames[] = {
      switches::kDisableGLExtensions,
      switches::kDisableLogging,
      switches::kDisableShaderNameHashing,
--#if BUILDFLAG(ENABLE_WEBRTC)
-+#if BUILDFLAG(ENABLE_WEBRTC) && !defined(OS_LINUX)
++#if !defined(OS_LINUX)
      switches::kDisableWebRtcHWEncoding,
- #endif
++#endif
  #if defined(OS_WIN)
+     switches::kEnableAcceleratedVpxDecode,
+ #endif
 diff --git content/browser/renderer_host/media/video_capture_browsertest.cc content/browser/renderer_host/media/video_capture_browsertest.cc
-index c03c46d7d78d..7c6fe24c39b4 100644
+index 59b89dc83aef..433561dc1300 100644
 --- content/browser/renderer_host/media/video_capture_browsertest.cc
 +++ content/browser/renderer_host/media/video_capture_browsertest.cc
-@@ -164,8 +164,13 @@ class VideoCaptureBrowserTest : public ContentBrowserTest,
+@@ -163,8 +163,13 @@ class VideoCaptureBrowserTest : public ContentBrowserTest,
        base::CommandLine::ForCurrentProcess()->AppendSwitch(
            switches::kUseFakeJpegDecodeAccelerator);
      } else {
@@ -231,10 +234,10 @@ index c03c46d7d78d..7c6fe24c39b4 100644
    }
  
 diff --git content/browser/renderer_host/media/video_capture_gpu_jpeg_decoder.cc content/browser/renderer_host/media/video_capture_gpu_jpeg_decoder.cc
-index 521eb91840ee..55ab762ab514 100644
+index f97690233f2f..2d45832d69de 100644
 --- content/browser/renderer_host/media/video_capture_gpu_jpeg_decoder.cc
 +++ content/browser/renderer_host/media/video_capture_gpu_jpeg_decoder.cc
-@@ -65,15 +65,21 @@ void VideoCaptureGpuJpegDecoder::Initialize() {
+@@ -66,15 +66,21 @@ void VideoCaptureGpuJpegDecoder::Initialize() {
    bool is_platform_supported =
        base::CommandLine::ForCurrentProcess()->HasSwitch(
            switches::kUseFakeJpegDecodeAccelerator);
@@ -261,10 +264,10 @@ index 521eb91840ee..55ab762ab514 100644
      RecordInitDecodeUMA_Locked();
      return;
 diff --git content/browser/renderer_host/render_process_host_impl.cc content/browser/renderer_host/render_process_host_impl.cc
-index 2a5c90e85c7d..73d72a80e62d 100644
+index 6fbecc82f14a..639d90882556 100644
 --- content/browser/renderer_host/render_process_host_impl.cc
 +++ content/browser/renderer_host/render_process_host_impl.cc
-@@ -2698,7 +2698,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+@@ -2690,7 +2690,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
      switches::kDefaultTileHeight,
      switches::kDisable2dCanvasImageChromium,
      switches::kDisableAcceleratedJpegDecoding,
@@ -276,11 +279,11 @@ index 2a5c90e85c7d..73d72a80e62d 100644
      switches::kDisableBackgroundTasks,
      switches::kDisableBackgroundTimerThrottling,
      switches::kDisableBreakpad,
-@@ -2835,8 +2839,10 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+@@ -2823,8 +2827,10 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+ #if BUILDFLAG(ENABLE_RUNTIME_MEDIA_RENDERER_SELECTION)
      switches::kDisableMojoRenderer,
  #endif
- #if BUILDFLAG(ENABLE_WEBRTC)
-+#if !defined(OS_LINUX) || defined(OS_CHROMEOS)
++#if !defined(OS_LINUX) || defined (OS_CHROMEOS)
      switches::kDisableWebRtcHWDecoding,
      switches::kDisableWebRtcHWEncoding,
 +#endif
@@ -306,10 +309,10 @@ index 8c3c2c121625..edf988256de3 100644
  
   private:
 diff --git content/gpu/BUILD.gn content/gpu/BUILD.gn
-index 3e858724af3b..ae74223d7887 100644
+index 9a8b1ca6b4f4..4a28a3902cd2 100644
 --- content/gpu/BUILD.gn
 +++ content/gpu/BUILD.gn
-@@ -130,4 +130,8 @@ target(link_target_type, "gpu_sources") {
+@@ -134,4 +134,8 @@ target(link_target_type, "gpu_sources") {
        (!is_chromecast || is_cast_desktop_build)) {
      configs += [ "//build/config/linux/dri" ]
    }
@@ -319,7 +322,7 @@ index 3e858724af3b..ae74223d7887 100644
 +  }
  }
 diff --git content/gpu/gpu_main.cc content/gpu/gpu_main.cc
-index d9c8b6d8c618..54eaa49842eb 100644
+index e6a589fb90e0..220856871aec 100644
 --- content/gpu/gpu_main.cc
 +++ content/gpu/gpu_main.cc
 @@ -286,7 +286,7 @@ int GpuMain(const MainFunctionParams& parameters) {
@@ -341,18 +344,10 @@ index d9c8b6d8c618..54eaa49842eb 100644
  #endif
  
 diff --git content/public/browser/gpu_utils.cc content/public/browser/gpu_utils.cc
-index b2fd38514cba..7a2d39266146 100644
+index 52db4930d03b..98c7c0356263 100644
 --- content/public/browser/gpu_utils.cc
 +++ content/public/browser/gpu_utils.cc
-@@ -7,6 +7,7 @@
- #include "base/command_line.h"
- #include "base/single_thread_task_runner.h"
- #include "base/strings/string_number_conversions.h"
-+#include "build/build_config.h"
- #include "content/browser/gpu/gpu_process_host.h"
- #include "content/public/common/content_features.h"
- #include "content/public/common/content_switches.h"
-@@ -55,9 +56,17 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+@@ -58,9 +58,17 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
    gpu_preferences.in_process_gpu =
        command_line->HasSwitch(switches::kInProcessGPU);
    gpu_preferences.disable_accelerated_video_decode =
@@ -371,7 +366,7 @@ index b2fd38514cba..7a2d39266146 100644
    uint32_t enable_accelerated_vpx_decode_val =
        gpu::GpuPreferences::VPX_VENDOR_MICROSOFT;
 diff --git content/public/common/content_switches.cc content/public/common/content_switches.cc
-index 97e443b8fd70..8f66bb359370 100644
+index aac63339ab22..64be49005227 100644
 --- content/public/common/content_switches.cc
 +++ content/public/common/content_switches.cc
 @@ -78,12 +78,21 @@ const char kDisable3DAPIs[]                 = "disable-3d-apis";
@@ -397,7 +392,7 @@ index 97e443b8fd70..8f66bb359370 100644
  // Disables hardware acceleration of video decode, where available.
  const char kDisableAcceleratedVideoDecode[] =
      "disable-accelerated-video-decode";
-@@ -867,11 +876,13 @@ const char kZygoteProcess[]                 = "zygote";
+@@ -856,11 +865,13 @@ const char kWaitForDebuggerChildren[]       = "wait-for-debugger-children";
  // ignores this switch on its stable and beta channels.
  const char kDisableWebRtcEncryption[]      = "disable-webrtc-encryption";
  
@@ -412,7 +407,7 @@ index 97e443b8fd70..8f66bb359370 100644
  // Enables negotiation of GCM cipher suites from RFC 7714 for SRTP in WebRTC.
  // See https://tools.ietf.org/html/rfc7714 for further information.
 diff --git content/public/common/content_switches.h content/public/common/content_switches.h
-index a1ccec7e81f5..69348a39016a 100644
+index 990f172ac8cb..0deff42bf853 100644
 --- content/public/common/content_switches.h
 +++ content/public/common/content_switches.h
 @@ -33,7 +33,11 @@ CONTENT_EXPORT extern const char kDisable2dCanvasImageChromium[];
@@ -427,7 +422,7 @@ index a1ccec7e81f5..69348a39016a 100644
  CONTENT_EXPORT extern const char kDisableAcceleratedVideoDecode[];
  CONTENT_EXPORT extern const char kDisableAcceleratedVideoEncode[];
  CONTENT_EXPORT extern const char kDisableAudioSupportForDesktopShare[];
-@@ -107,6 +111,9 @@ CONTENT_EXPORT extern const char kDisableZeroCopyDxgiVideo[];
+@@ -105,6 +109,9 @@ CONTENT_EXPORT extern const char kDisableZeroCopyDxgiVideo[];
  CONTENT_EXPORT extern const char kDomAutomationController[];
  extern const char kDisable2dCanvasClipAntialiasing[];
  CONTENT_EXPORT extern const char kDumpBlinkRuntimeCallStats[];
@@ -437,9 +432,9 @@ index a1ccec7e81f5..69348a39016a 100644
  CONTENT_EXPORT extern const char kEnableAggressiveDOMStorageFlushing[];
  CONTENT_EXPORT extern const char kEnableAutomation[];
  CONTENT_EXPORT extern const char kEnablePreferCompositingToLCDText[];
-@@ -242,8 +249,10 @@ CONTENT_EXPORT extern const char kZygoteProcess[];
+@@ -237,8 +244,10 @@ CONTENT_EXPORT extern const char kValidateInputEventStream[];
+ CONTENT_EXPORT extern const char kWaitForDebuggerChildren[];
  
- #if BUILDFLAG(ENABLE_WEBRTC)
  CONTENT_EXPORT extern const char kDisableWebRtcEncryption[];
 +#if defined(OS_CHROMEOS)
  CONTENT_EXPORT extern const char kDisableWebRtcHWDecoding[];
@@ -449,7 +444,7 @@ index a1ccec7e81f5..69348a39016a 100644
  CONTENT_EXPORT extern const char kEnableWebRtcSrtpEncryptedHeaders[];
  CONTENT_EXPORT extern const char kEnableWebRtcStunOrigin[];
 diff --git content/renderer/media/webrtc/peer_connection_dependency_factory.cc content/renderer/media/webrtc/peer_connection_dependency_factory.cc
-index 12f443e4e2f4..39157b8698b0 100644
+index d57e983c03b3..2ab97e307383 100644
 --- content/renderer/media/webrtc/peer_connection_dependency_factory.cc
 +++ content/renderer/media/webrtc/peer_connection_dependency_factory.cc
 @@ -276,10 +276,18 @@ void PeerConnectionDependencyFactory::InitializeSignalingThread(
@@ -472,10 +467,10 @@ index 12f443e4e2f4..39157b8698b0 100644
    }
  
 diff --git content/renderer/render_thread_impl.cc content/renderer/render_thread_impl.cc
-index 089bc9a31881..55981e2a71cf 100644
+index 1e68c2fee634..075725a9126d 100644
 --- content/renderer/render_thread_impl.cc
 +++ content/renderer/render_thread_impl.cc
-@@ -1578,7 +1578,11 @@ media::GpuVideoAcceleratorFactories* RenderThreadImpl::GetGpuFactories() {
+@@ -1480,7 +1480,11 @@ media::GpuVideoAcceleratorFactories* RenderThreadImpl::GetGpuFactories() {
                               kGpuStreamIdMedia, kGpuStreamPriorityMedia);
  
    const bool enable_video_accelerator =
@@ -488,7 +483,7 @@ index 089bc9a31881..55981e2a71cf 100644
             .status_values[gpu::GPU_FEATURE_TYPE_ACCELERATED_VIDEO_DECODE] ==
         gpu::kGpuFeatureStatusEnabled);
 diff --git gpu/config/software_rendering_list.json gpu/config/software_rendering_list.json
-index b608b38e1608..d9f53118bf1e 100644
+index 3654586b88bc..666a578e2fbc 100644
 --- gpu/config/software_rendering_list.json
 +++ gpu/config/software_rendering_list.json
 @@ -376,17 +376,6 @@
@@ -510,10 +505,10 @@ index b608b38e1608..d9f53118bf1e 100644
        "id": 50,
        "description": "Disable VMware software renderer on older Mesa",
 diff --git media/gpu/BUILD.gn media/gpu/BUILD.gn
-index 35cff6bfbeee..edf9012c7e40 100644
+index 28436882c29c..3ff1afdfc776 100644
 --- media/gpu/BUILD.gn
 +++ media/gpu/BUILD.gn
-@@ -491,6 +491,14 @@ if (use_v4l2_codec || use_vaapi || is_mac || is_win) {
+@@ -500,6 +500,14 @@ if (use_v4l2_codec || use_vaapi || is_mac || is_win) {
    }
  }
  
@@ -528,7 +523,7 @@ index 35cff6bfbeee..edf9012c7e40 100644
  if (use_vaapi) {
    test("jpeg_encode_accelerator_unittest") {
      deps = [
-@@ -551,6 +559,10 @@ if (use_v4l2_codec || use_vaapi) {
+@@ -558,6 +566,10 @@ if (use_v4l2_codec || use_vaapi) {
      if (use_ozone) {
        deps += [ "//ui/ozone" ]
      }
