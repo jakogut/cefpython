@@ -870,12 +870,12 @@ def getenv():
     # GN configuration
     env["CEF_USE_GN"] = "1"
     # Issue #73 patch applied here with "use_allocator=none"
-    env["GN_DEFINES"] = "use_sysroot=false symbol_level=0 use_jumbo_build=false use_allocator=none"
-    env["GN_DEFINES"] += " use_vaapi=true proprietary_codecs=true ffmpeg_branding=Chrome"
+    env["GN_DEFINES"] = "use_sysroot=true symbol_level=0 use_jumbo_build=false use_allocator=none arm_float_abi=hard"
+    env["GN_DEFINES"] += " proprietary_codecs=true ffmpeg_branding=Chrome"
     env["GN_DEFINES"] += " use_gtk3=true use_cups=false use_gnome_keyring=false"
     env["GN_DEFINES"] += " enable_reporting=false enable_remoting=false enable_nacl=false is_official_build=true"
     env["GN_DEFINES"] += " angle_enable_vulkan=false angle_enable_vulkan_validation_layers=false enable_vulkan=false linux_use_bundled_binutils=false"
-    env["GN_DEFINES"] += " use_system_libdrm=true use_system_libjpeg=true use_system_libpng=true use_system_freetype=true use_system_harfbuzz=true use_system_zlib=true treat_warnings_as_errors=false"
+    env["GN_DEFINES"] += " treat_warnings_as_errors=false"
     # To perform an official build set GYP_DEFINES=buildtype=Official.
     # This will disable debugging code and enable additional link-time
     # optimizations in Release builds.
@@ -937,8 +937,9 @@ def run_automate_git():
         ninja -v -j2 -Cout\Release cefclient
     """
     args = []
-    if ARCH64 and not Options.x86:
-        args.append("--x64-build")
+    #if ARCH64 and not Options.x86:
+    #    args.append("--x64-build")
+    args.append('--arm-build')
     args.append("--download-dir=" + Options.cef_build_dir)
     args.append("--branch=" + Options.cef_branch)
     if Options.release_build:
