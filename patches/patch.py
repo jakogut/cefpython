@@ -14,16 +14,12 @@ if OS_POSTFIX == "linux":
     # noinspection PyUnresolvedReferences
     patches.extend([
         {
-            'name': 'vaapi',
-            'path': '.'
-        },
-        {
             # Discovery of the "icudtl.dat" file fails on Linux.
             'name': 'issue231',
             'path': 'cef/'
         },
         {
-            'name': 'implement-washidden-for-windowed-rendering',
+            'name': 'swiftshader_conditional',
             'path': 'cef/'
         },
     ])
