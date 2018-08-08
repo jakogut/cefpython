@@ -57,5 +57,7 @@ elif sys.version_info[:2] == (3, 5):
 elif sys.version_info[:2] == (3, 6):
     # noinspection PyUnresolvedReferences
     from . import cefpython_py36 as cefpython
+elif sys.version_info[:2] == (3, 7):
+    from . import cefpython_py37 as cefpython
 else:
     raise Exception("Python version not supported: " + sys.version)

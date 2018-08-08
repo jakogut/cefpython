@@ -75,7 +75,7 @@ NO_REBUILD = False
 NO_AUTOMATE = False
 
 # Python versions
-SUPPORTED_PYTHON_VERSIONS = [(2, 7), (3, 4), (3, 5), (3, 6)]
+SUPPORTED_PYTHON_VERSIONS = [(2, 7), (3, 4), (3, 5), (3, 6), (3, 7)]
 
 # Python search paths. It will use first Python found for specific version.
 # Supports replacement of one environment variable in path eg.: %ENV_KEY%.
