@@ -13,6 +13,27 @@ OS_POSTFIX = ("win" if platform.system() == "Windows" else
 if OS_POSTFIX == "linux":
     # noinspection PyUnresolvedReferences
     patches.extend([
+        # Chromium build issues
+        {
+            'name': '0002-chromium-compiler-r2',
+            'path': '.'
+        },
+        #{
+        #    'name': '0003-ffmpeg-r1',
+        #    'path': '.'
+        #},
+        {
+            'name': '0004-libwebp-shim-r0',
+            'path': '.'
+        },
+        {
+            'name': '0005-cors-string-r0',
+            'path': '.'
+        },
+        {
+            'name': '0006-libjpeg-r0',
+            'path': '.'
+        },
         {
             'name': 'vaapi',
             'path': '.'
@@ -26,4 +47,8 @@ if OS_POSTFIX == "linux":
             'name': 'implement-washidden-for-windowed-rendering',
             'path': 'cef/'
         },
+        {
+            'name': 'disable_Werror',
+            'path': 'cef/',
+        }
     ])
