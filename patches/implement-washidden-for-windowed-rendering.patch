@@ -1,8 +1,8 @@
 diff --git libcef/browser/browser_host_impl.cc libcef/browser/browser_host_impl.cc
-index 8ecc5fca..d0d0b7b6 100644
+index 2bad458c..c2837197 100644
 --- libcef/browser/browser_host_impl.cc
 +++ libcef/browser/browser_host_impl.cc
-@@ -1080,11 +1080,6 @@ void CefBrowserHostImpl::WasResized() {
+@@ -1102,11 +1102,6 @@ void CefBrowserHostImpl::WasResized() {
  }
  
  void CefBrowserHostImpl::WasHidden(bool hidden) {
@@ -13,9 +13,9 @@ index 8ecc5fca..d0d0b7b6 100644
 -
    if (!CEF_CURRENTLY_ON_UIT()) {
      CEF_POST_TASK(CEF_UIT,
-                   base::Bind(&CefBrowserHost::WasHidden, this, hidden));
+                   base::BindOnce(&CefBrowserHost::WasHidden, this, hidden));
 diff --git libcef/browser/browser_platform_delegate.cc libcef/browser/browser_platform_delegate.cc
-index c247d7d3..c0ed5a77 100644
+index 22ef1303..0d3f5eac 100644
 --- libcef/browser/browser_platform_delegate.cc
 +++ libcef/browser/browser_platform_delegate.cc
 @@ -11,6 +11,7 @@
