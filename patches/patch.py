@@ -13,10 +13,10 @@ OS_POSTFIX = ("win" if platform.system() == "Windows" else
 if OS_POSTFIX == "linux":
     # noinspection PyUnresolvedReferences
     patches.extend([
-        #{
-        #    'name': 'vaapi',
-        #    'path': '.'
-        #},
+        {
+            'name': 'vaapi',
+            'path': '.'
+        },
         {
             # Discovery of the "icudtl.dat" file fails on Linux.
             'name': 'issue231',

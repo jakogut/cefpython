@@ -40,7 +40,7 @@ index 552f4ba5..95af66ef 100644
 +
  #endif  // CEF_INCLUDE_CEF_PATH_UTIL_H_
 diff --git libcef/browser/path_util_impl.cc libcef/browser/path_util_impl.cc
-index 4d30d0d7..2a7459ba 100644
+index 4d30d0d7..19851e93 100644
 --- libcef/browser/path_util_impl.cc
 +++ libcef/browser/path_util_impl.cc
 @@ -54,3 +54,38 @@ bool CefGetPath(PathKey key, CefString& path) {
@@ -110,3 +110,30 @@ index b6d27e94..d76c66f8 100644
  CEF_EXPORT int cef_launch_process(struct _cef_command_line_t* command_line) {
    // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
  
+diff --git libcef_dll/wrapper/libcef_dll_wrapper.cc libcef_dll/wrapper/libcef_dll_wrapper.cc
+index ea97c1b2..645c2991 100644
+--- libcef_dll/wrapper/libcef_dll_wrapper.cc
++++ libcef_dll/wrapper/libcef_dll_wrapper.cc
+@@ -884,6 +884,22 @@ CEF_GLOBAL bool CefGetPath(PathKey key, CefString& path) {
+   return _retval ? true : false;
+ }
+ 
++NO_SANITIZE("cfi-icall")
++CEF_GLOBAL bool CefOverridePath(PathKey key, const CefString& path) {
++  // Verify param: path; type: string_byref_count
++  DCHECK(!path.empty());
++  if (path.empty())
++    return false;
++
++  // Execute
++  int _retval = cef_override_path(
++      key,
++      path.GetStruct());
++
++  // Return type: bool
++  return _retval?true:false;
++}
++
+ NO_SANITIZE("cfi-icall")
+ CEF_GLOBAL bool CefLaunchProcess(CefRefPtr<CefCommandLine> command_line) {
+   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
