@@ -27,6 +27,8 @@ cdef extern from "gtk/gtk.h" nogil:
         unsigned long blue_mask
         XPointer *obdata
         void *funcs
+
+cdef extern from "X11/Xutil.h" nogil:
     void XDestroyImage(XImage *ximage)
     unsigned long XGetPixel(XImage* image, int x, int y)
 

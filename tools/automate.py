@@ -34,7 +34,6 @@ Usage:
                 [--ninja-jobs JOBS] [--gyp-generators GENERATORS]
                 [--gyp-msvs-version MSVS]
                 [--use-system-freetype USE_SYSTEM_FREETYPE]
-                [--use-gtk3 USE_GTK3]
                 [--use-ccache USE_CCACHE]
                 [--proprietary-codecs PROPRIETARY_CODECS]
                 [--no-depot-tools-update NO_DEPOT_TOOLS_UPDATE]
@@ -69,10 +68,9 @@ Options:
     --gyp-generators=<gen>   Set GYP_GENERATORS [default: ninja].
     --gyp-msvs-version=<v>   Set GYP_MSVS_VERSION.
     --use-system-freetype    Use system Freetype library on Linux (Issue #402)
-    --use-gtk3               Link CEF with GTK 3 libraries (Issue #446)
+    --use-gtk                Link CEF with GTK
     --use-ccache             Use ccache for faster (re)builds
     --proprietary-codecs     Enable proprietary codecs such as H264 and AAC,
-                             licensing restrictions may apply.
     --no-depot-tools-update  Do not update depot_tools/ directory. When
                              building old unsupported versions of Chromium
                              you want to manually checkout an old version
@@ -120,7 +118,6 @@ class Options(object):
     gyp_generators = "ninja"  # Even though CEF uses now GN, still some GYP
     gyp_msvs_version = ""     # env variables are being used.
     use_system_freetype = False
-    use_gtk3 = False
     use_ccache = False
     proprietary_codecs = False
     no_depot_tools_update = False
@@ -904,14 +901,11 @@ def getenv():
     if platform.system() == "Windows":
         env["GYP_MSVS_VERSION"] = Options.gyp_msvs_version
 
+
     # GN configuration
     env["CEF_USE_GN"] = "1"
     # Issue #73 patch applied here with "use_allocator=none"
-    env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=1"
-
-    # Link with GTK 3 (Issue #446)
-    if Options.use_gtk3:
-        env["GN_DEFINES"] += " use_gtk3=true"
+    env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=0 treat_warnings_as_errors=false"
 
     # Use ccache for faster (re)builds
     if Options.use_ccache:

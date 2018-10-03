@@ -28,4 +28,9 @@ if OS_POSTFIX == "linux":
             'name': 'issue231',
             'path': 'cef/'
         },
+        {
+            # Fixes cfi-icall warnings treated as errors
+            'name': 'disable_Werror',
+            'path': 'cef/'
+        }
     ])

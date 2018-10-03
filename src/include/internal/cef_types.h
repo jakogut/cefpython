@@ -152,14 +152,6 @@ typedef struct _cef_settings_t {
   size_t size;
 
   ///
-  // Set to true (1) to use a single process for the browser and renderer. This
-  // run mode is not officially supported by Chromium and is less stable than
-  // the multi-process default. Also configurable using the "single-process"
-  // command-line switch.
-  ///
-  int single_process;
-
-  ///
   // Set to true (1) to disable the sandbox for sub-processes. See
   // cef_sandbox_win.h for requirements to enable the sandbox on Windows. Also
   // configurable using the "no-sandbox" command-line switch.
@@ -189,7 +181,7 @@ typedef struct _cef_settings_t {
   // Set to true (1) to have the browser process message loop run in a separate
   // thread. If false (0) than the CefDoMessageLoopWork() function must be
   // called from your application message loop. This option is only supported on
-  // Windows.
+  // Windows and Linux.
   ///
   int multi_threaded_message_loop;
 
@@ -797,6 +789,11 @@ typedef enum {
   // Segmentation fault.
   ///
   TS_PROCESS_CRASHED,
+
+  ///
+  // Out of memory. Some platforms may use TS_PROCESS_CRASHED instead.
+  ///
+  TS_PROCESS_OOM,
 } cef_termination_status_t;
 
 ///
@@ -1422,6 +1419,11 @@ typedef enum {
   // Example: Generating data shown in the UI immediately after a click.
   ///
   TID_FILE_USER_BLOCKING,
+
+  ///
+  // Used to launch and terminate browser processes.
+  ///
+  TID_PROCESS_LAUNCHER,
 
   ///
   // Used to process IPC and network messages. Do not perform blocking tasks on

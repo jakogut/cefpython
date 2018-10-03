@@ -1,0 +1,22 @@
+diff --git cmake/cef_variables.cmake.in cmake/cef_variables.cmake.in
+index 583fa62b..bb2bd12a 100644
+--- cmake/cef_variables.cmake.in
++++ cmake/cef_variables.cmake.in
+@@ -83,7 +83,7 @@ if(OS_LINUX)
+     -pipe                           # Use pipes rather than temporary files for communication between build stages
+     -pthread                        # Use the pthread library
+     -Wall                           # Enable all warnings
+-    -Werror                         # Treat warnings as errors
++    #-Werror                         # Treat warnings as errors
+     -Wno-missing-field-initializers # Don't warn about missing field initializers
+     -Wno-unused-parameter           # Don't warn about unused parameters
+     -Wno-error=comment              # Don't warn about code in comments
+@@ -234,7 +234,7 @@ if(OS_MACOSX)
+     -funwind-tables                 # Support stack unwinding for backtrace()
+     -fvisibility=hidden             # Give hidden visibility to declarations that are not explicitly marked as visible
+     -Wall                           # Enable all warnings
+-    -Werror                         # Treat warnings as errors
++    #-Werror                         # Treat warnings as errors
+     -Wextra                         # Enable additional warnings
+     -Wendif-labels                  # Warn whenever an #else or an #endif is followed by text
+     -Wnewline-eof                   # Warn about no newline at end of file
