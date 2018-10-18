@@ -32,5 +32,13 @@ if OS_POSTFIX == "linux":
             # Fixes cfi-icall warnings treated as errors
             'name': 'disable_Werror',
             'path': 'cef/'
-        }
+        },
+        {
+            'name': 'cfi-vaapi-fix',
+            'path': '.',
+        },
+        {
+            'name': 'vaapi',
+            'path': '.',
+        },
     ])

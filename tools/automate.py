@@ -912,6 +912,9 @@ def getenv():
     # Issue #73 patch applied here with "use_allocator=none"
     env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=0 treat_warnings_as_errors=false"
 
+    # Enable VAAPI
+    env["GN_DEFINES"] += " use_vaapi=true"
+
     # Use ccache for faster (re)builds
     if Options.use_ccache:
         env["GN_DEFINES"] += " cc_wrapper=ccache"

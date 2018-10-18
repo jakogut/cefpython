@@ -1,0 +1,560 @@
+diff --git chrome/browser/about_flags.cc chrome/browser/about_flags.cc
+index 114581b1adfc..b6805f49770c 100644
+--- chrome/browser/about_flags.cc
++++ chrome/browser/about_flags.cc
+@@ -1386,12 +1386,14 @@ const FeatureEntry kFeatureEntries[] = {
+     {"ui-disable-partial-swap", flag_descriptions::kUiPartialSwapName,
+      flag_descriptions::kUiPartialSwapDescription, kOsAll,
+      SINGLE_DISABLE_VALUE_TYPE(switches::kUIDisablePartialSwap)},
++#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
+     {"disable-webrtc-hw-decoding", flag_descriptions::kWebrtcHwDecodingName,
+      flag_descriptions::kWebrtcHwDecodingDescription, kOsAndroid | kOsCrOS,
+      SINGLE_DISABLE_VALUE_TYPE(switches::kDisableWebRtcHWDecoding)},
+     {"disable-webrtc-hw-encoding", flag_descriptions::kWebrtcHwEncodingName,
+      flag_descriptions::kWebrtcHwEncodingDescription, kOsAndroid | kOsCrOS,
+      SINGLE_DISABLE_VALUE_TYPE(switches::kDisableWebRtcHWEncoding)},
++#endif
+     {"enable-webrtc-hw-h264-encoding",
+      flag_descriptions::kWebrtcHwH264EncodingName,
+      flag_descriptions::kWebrtcHwH264EncodingDescription, kOsAndroid | kOsCrOS,
+@@ -1772,6 +1774,13 @@ const FeatureEntry kFeatureEntries[] = {
+      flag_descriptions::kShowTouchHudDescription, kOsCrOS,
+      SINGLE_VALUE_TYPE(ash::switches::kAshTouchHud)},
+ #endif  // OS_CHROMEOS
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++    {
++        "enable-accelerated-video", flag_descriptions::kAcceleratedVideoName,
++        flag_descriptions::kAcceleratedVideoDescription, kOsLinux,
++        SINGLE_VALUE_TYPE(switches::kEnableAcceleratedVideo),
++    },
++#else
+     {
+         "disable-accelerated-video-decode",
+         flag_descriptions::kAcceleratedVideoDecodeName,
+@@ -1779,6 +1788,7 @@ const FeatureEntry kFeatureEntries[] = {
+         kOsMac | kOsWin | kOsCrOS | kOsAndroid,
+         SINGLE_DISABLE_VALUE_TYPE(switches::kDisableAcceleratedVideoDecode),
+     },
++#endif
+ #if defined(OS_WIN)
+     {"enable-hdr", flag_descriptions::kEnableHDRName,
+      flag_descriptions::kEnableHDRDescription, kOsWin,
+@@ -2458,12 +2468,17 @@ const FeatureEntry kFeatureEntries[] = {
+      FEATURE_VALUE_TYPE(features::kOpenVR)},
+ #endif  // ENABLE_OPENVR
+ #endif  // ENABLE_VR
+-#if defined(OS_CHROMEOS)
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++    {"enable-accelerated-mjpeg-decode",
++     flag_descriptions::kAcceleratedMjpegDecodeName,
++     flag_descriptions::kAcceleratedMjpegDecodeDescription, kOsLinux,
++     SINGLE_VALUE_TYPE(switches::kEnableAcceleratedMjpegDecode)},
++#elif defined(OS_CHROMEOS)
+     {"disable-accelerated-mjpeg-decode",
+      flag_descriptions::kAcceleratedMjpegDecodeName,
+      flag_descriptions::kAcceleratedMjpegDecodeDescription, kOsCrOS,
+      SINGLE_DISABLE_VALUE_TYPE(switches::kDisableAcceleratedMjpegDecode)},
+-#endif  // OS_CHROMEOS
++#endif
+     {"v8-cache-options", flag_descriptions::kV8CacheOptionsName,
+      flag_descriptions::kV8CacheOptionsDescription, kOsAll,
+      MULTI_VALUE_TYPE(kV8CacheOptionsChoices)},
+diff --git chrome/browser/chromeos/login/chrome_restart_request.cc chrome/browser/chromeos/login/chrome_restart_request.cc
+index 666a4d250bf8..dc4cbe48ab5d 100644
+--- chrome/browser/chromeos/login/chrome_restart_request.cc
++++ chrome/browser/chromeos/login/chrome_restart_request.cc
+@@ -19,6 +19,7 @@
+ #include "base/sys_info.h"
+ #include "base/timer/timer.h"
+ #include "base/values.h"
++#include "build/build_config.h"
+ #include "cc/base/switches.h"
+ #include "chrome/browser/browser_process.h"
+ #include "chrome/browser/chromeos/boot_times_recorder.h"
+@@ -84,9 +85,14 @@ void DeriveCommandLine(const GURL& start_url,
+     ::switches::kDisable2dCanvasImageChromium,
+     ::switches::kDisableAccelerated2dCanvas,
+     ::switches::kDisableAcceleratedJpegDecoding,
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++    ::switches::kEnableAcceleratedMjpegDecode,
++    ::switches::kEnableAcceleratedVideo,
++#else
+     ::switches::kDisableAcceleratedMjpegDecode,
+     ::switches::kDisableAcceleratedVideoDecode,
+     ::switches::kDisableAcceleratedVideoEncode,
++#endif
+     ::switches::kDisableBlinkFeatures,
+     ::switches::kDisableCastStreamingHWEncoding,
+     ::switches::kDisableGpu,
+@@ -160,8 +166,10 @@ void DeriveCommandLine(const GURL& start_url,
+     ::switches::kEnableWebGLImageChromium,
+     ::switches::kEnableWebVR,
+     ::switches::kEnableUnsafeWebGPU,
++#if (defined(OS_CHROMEOS) || defined(OS_ANDROID))
+     ::switches::kDisableWebRtcHWDecoding,
+     ::switches::kDisableWebRtcHWEncoding,
++#endif
+     ::switches::kOzonePlatform,
+     ash::switches::kAshEnableTabletMode,
+     ash::switches::kAshEnableWaylandServer,
+diff --git chrome/browser/flag_descriptions.cc chrome/browser/flag_descriptions.cc
+index 1e7a996443ed..fd4895c09fbf 100644
+--- chrome/browser/flag_descriptions.cc
++++ chrome/browser/flag_descriptions.cc
+@@ -14,6 +14,13 @@ const char kAccelerated2dCanvasDescription[] =
+     "Enables the use of the GPU to perform 2d canvas rendering instead of "
+     "using software rendering.";
+ 
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++const char kAcceleratedVideoName[] = "Hardware-accelerated video";
++const char kAcceleratedVideoDescription[] =
++    "Hardware-accelerated video where VA-API driver is installed on the"
++    "system.";
++#endif
++
+ const char kAcceleratedVideoDecodeName[] = "Hardware-accelerated video decode";
+ const char kAcceleratedVideoDecodeDescription[] =
+     "Hardware-accelerated video decode where available.";
+@@ -2117,6 +2124,7 @@ const char kWebrtcHybridAgcName[] = "WebRTC hybrid Agc2/Agc1.";
+ const char kWebrtcHybridAgcDescription[] =
+     "WebRTC Agc2 digital adaptation with Agc1 analog adaptation.";
+ 
++#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
+ const char kWebrtcHwDecodingName[] = "WebRTC hardware video decoding";
+ const char kWebrtcHwDecodingDescription[] =
+     "Support in WebRTC for decoding video streams using platform hardware.";
+@@ -2124,6 +2132,7 @@ const char kWebrtcHwDecodingDescription[] =
+ const char kWebrtcHwEncodingName[] = "WebRTC hardware video encoding";
+ const char kWebrtcHwEncodingDescription[] =
+     "Support in WebRTC for encoding video streams using platform hardware.";
++#endif
+ 
+ const char kWebrtcHwH264EncodingName[] = "WebRTC hardware h264 video encoding";
+ const char kWebrtcHwH264EncodingDescription[] =
+@@ -3055,14 +3064,16 @@ const char kTextSuggestionsTouchBarDescription[] =
+ 
+ // Chrome OS -------------------------------------------------------------------
+ 
+-#if defined(OS_CHROMEOS)
++#if defined(OS_CHROMEOS) || (defined(OS_LINUX) && !defined(OS_ANDROID))
+ 
+ const char kAcceleratedMjpegDecodeName[] =
+     "Hardware-accelerated mjpeg decode for captured frame";
+ const char kAcceleratedMjpegDecodeDescription[] =
+     "Enable hardware-accelerated mjpeg decode for captured frame where "
+     "available.";
++#endif
+ 
++#if defined(OS_CHROMEOS)
+ const char kAllowTouchpadThreeFingerClickName[] = "Touchpad three-finger-click";
+ const char kAllowTouchpadThreeFingerClickDescription[] =
+     "Enables touchpad three-finger-click as middle button.";
+diff --git chrome/browser/flag_descriptions.h chrome/browser/flag_descriptions.h
+index cc429ddc3872..8d11945485ea 100644
+--- chrome/browser/flag_descriptions.h
++++ chrome/browser/flag_descriptions.h
+@@ -37,6 +37,10 @@ namespace flag_descriptions {
+ extern const char kAccelerated2dCanvasName[];
+ extern const char kAccelerated2dCanvasDescription[];
+ 
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++extern const char kAcceleratedVideoName[];
++extern const char kAcceleratedVideoDescription[];
++#endif
+ extern const char kAcceleratedVideoDecodeName[];
+ extern const char kAcceleratedVideoDecodeDescription[];
+ 
+@@ -1846,13 +1850,17 @@ extern const char kPermissionPromptPersistenceToggleDescription[];
+ 
+ #endif  // defined(OS_MACOSX)
+ 
+-// Chrome OS ------------------------------------------------------------------
+-
+-#if defined(OS_CHROMEOS)
++#if defined(OS_CHROMEOS) || (defined(OS_LINUX) && !defined(OS_ANDROID))
+ 
+ extern const char kAcceleratedMjpegDecodeName[];
+ extern const char kAcceleratedMjpegDecodeDescription[];
+ 
++#endif
++
++// Chrome OS ------------------------------------------------------------------
++
++#if defined(OS_CHROMEOS)
++
+ extern const char kAllowTouchpadThreeFingerClickName[];
+ extern const char kAllowTouchpadThreeFingerClickDescription[];
+ 
+diff --git content/browser/gpu/compositor_util.cc content/browser/gpu/compositor_util.cc
+index 9bcf19163042..b9fdf74c92f1 100644
+--- content/browser/gpu/compositor_util.cc
++++ content/browser/gpu/compositor_util.cc
+@@ -150,7 +150,11 @@ const GpuFeatureData GetGpuFeatureData(
+       {"video_decode",
+        SafeGetFeatureStatus(gpu_feature_info,
+                             gpu::GPU_FEATURE_TYPE_ACCELERATED_VIDEO_DECODE),
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++       !command_line.HasSwitch(switches::kEnableAcceleratedVideo),
++#else
+        command_line.HasSwitch(switches::kDisableAcceleratedVideoDecode),
++#endif
+        "Accelerated video decode has been disabled, either via blacklist, "
+        "about:flags or the command line.",
+        true, true},
+diff --git content/browser/gpu/gpu_process_host.cc content/browser/gpu/gpu_process_host.cc
+index 9511100e6077..4db3c15c193a 100644
+--- content/browser/gpu/gpu_process_host.cc
++++ content/browser/gpu/gpu_process_host.cc
+@@ -210,7 +210,9 @@ static const char* const kSwitchNames[] = {
+     switches::kDisableLogging,
+     switches::kDisableShaderNameHashing,
+     switches::kDisableSkiaRuntimeOpts,
++#if !defined(OS_LINUX)
+     switches::kDisableWebRtcHWEncoding,
++#endif
+ #if defined(OS_WIN)
+     switches::kEnableAcceleratedVpxDecode,
+ #endif
+diff --git content/browser/renderer_host/media/video_capture_browsertest.cc content/browser/renderer_host/media/video_capture_browsertest.cc
+index 7306b1ee3938..b8f2507f484e 100644
+--- content/browser/renderer_host/media/video_capture_browsertest.cc
++++ content/browser/renderer_host/media/video_capture_browsertest.cc
+@@ -166,8 +166,13 @@ class VideoCaptureBrowserTest : public ContentBrowserTest,
+       base::CommandLine::ForCurrentProcess()->AppendSwitch(
+           switches::kUseFakeJpegDecodeAccelerator);
+     } else {
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++      base::CommandLine::ForCurrentProcess()->AppendSwitch(
++          switches::kEnableAcceleratedMjpegDecode);
++#else
+       base::CommandLine::ForCurrentProcess()->AppendSwitch(
+           switches::kDisableAcceleratedMjpegDecode);
++#endif
+     }
+   }
+ 
+diff --git content/browser/renderer_host/render_process_host_impl.cc content/browser/renderer_host/render_process_host_impl.cc
+index 989b52793c48..625bcda1baa9 100644
+--- content/browser/renderer_host/render_process_host_impl.cc
++++ content/browser/renderer_host/render_process_host_impl.cc
+@@ -2931,7 +2931,11 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+     switches::kDefaultTileHeight,
+     switches::kDisable2dCanvasImageChromium,
+     switches::kDisableAcceleratedJpegDecoding,
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++    switches::kEnableAcceleratedVideo,
++#else
+     switches::kDisableAcceleratedVideoDecode,
++#endif
+     switches::kDisableBackgroundTasks,
+     switches::kDisableBackgroundTimerThrottling,
+     switches::kDisableBreakpad,
+@@ -3068,8 +3072,10 @@ void RenderProcessHostImpl::PropagateBrowserCommandLineToRenderer(
+ #if BUILDFLAG(ENABLE_RUNTIME_MEDIA_RENDERER_SELECTION)
+     switches::kDisableMojoRenderer,
+ #endif
++#if !defined(OS_LINUX) || defined(OS_CHROMEOS)
+     switches::kDisableWebRtcHWDecoding,
+     switches::kDisableWebRtcHWEncoding,
++#endif
+     switches::kEnableWebRtcSrtpAesGcm,
+     switches::kEnableWebRtcSrtpEncryptedHeaders,
+     switches::kEnableWebRtcStunOrigin,
+diff --git content/browser/utility_process_host.cc content/browser/utility_process_host.cc
+index da650c76a0aa..5a55bf818216 100644
+--- content/browser/utility_process_host.cc
++++ content/browser/utility_process_host.cc
+@@ -304,7 +304,11 @@ bool UtilityProcessHost::StartProcess() {
+       switches::kOverrideUseSoftwareGLForTests,
+       switches::kOverrideEnabledCdmInterfaceVersion,
+       switches::kProxyServer,
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++      switches::kEnableAcceleratedMjpegDecode,
++#else
+       switches::kDisableAcceleratedMjpegDecode,
++#endif
+       switches::kUseFakeDeviceForMediaStream,
+       switches::kUseFakeJpegDecodeAccelerator,
+       switches::kUseFileForFakeVideoCapture,
+diff --git content/browser/webrtc/webrtc_media_recorder_browsertest.cc content/browser/webrtc/webrtc_media_recorder_browsertest.cc
+index 8c3c2c121625..edf988256de3 100644
+--- content/browser/webrtc/webrtc_media_recorder_browsertest.cc
++++ content/browser/webrtc/webrtc_media_recorder_browsertest.cc
+@@ -66,7 +66,12 @@ class MAYBE_WebRtcMediaRecorderTest
+       return;
+     // This flag is also used for encoding, https://crbug.com/616640.
+     base::CommandLine::ForCurrentProcess()->AppendSwitch(
+-        switches::kDisableAcceleratedVideoDecode);
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++        switches::kEnableAcceleratedVideo
++#else
++        switches::kDisableAcceleratedVideoDecode
++#endif
++        );
+   }
+ 
+  private:
+diff --git content/gpu/BUILD.gn content/gpu/BUILD.gn
+index 8974e441d1ba..291236e34abc 100644
+--- content/gpu/BUILD.gn
++++ content/gpu/BUILD.gn
+@@ -134,4 +134,8 @@ target(link_target_type, "gpu_sources") {
+       (!is_chromecast || is_cast_desktop_build)) {
+     configs += [ "//build/config/linux/dri" ]
+   }
++
++  if (is_desktop_linux) {
++    public_configs = [ "//media/gpu:libva_config" ]
++  }
+ }
+diff --git content/gpu/gpu_main.cc content/gpu/gpu_main.cc
+index f589d015d71e..3320a01062ff 100644
+--- content/gpu/gpu_main.cc
++++ content/gpu/gpu_main.cc
+@@ -283,7 +283,7 @@ int GpuMain(const MainFunctionParams& parameters) {
+ 
+   base::PlatformThread::SetName("CrGpuMain");
+ 
+-#if defined(OS_ANDROID) || defined(OS_CHROMEOS)
++#if defined(OS_LINUX)
+   // Set thread priority before sandbox initialization.
+   base::PlatformThread::SetCurrentThreadPriority(base::ThreadPriority::DISPLAY);
+ #endif
+@@ -316,7 +316,7 @@ int GpuMain(const MainFunctionParams& parameters) {
+   GetContentClient()->SetGpuInfo(gpu_init->gpu_info());
+ 
+   base::ThreadPriority io_thread_priority = base::ThreadPriority::NORMAL;
+-#if defined(OS_ANDROID) || defined(OS_CHROMEOS)
++#if defined(OS_LINUX)
+   io_thread_priority = base::ThreadPriority::DISPLAY;
+ #endif
+ 
+diff --git content/public/browser/gpu_utils.cc content/public/browser/gpu_utils.cc
+index fc97755995cd..8e156ef2d885 100644
+--- content/public/browser/gpu_utils.cc
++++ content/public/browser/gpu_utils.cc
+@@ -58,9 +58,17 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+   gpu_preferences.in_process_gpu =
+       command_line->HasSwitch(switches::kInProcessGPU);
+   gpu_preferences.disable_accelerated_video_decode =
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++      !command_line->HasSwitch(switches::kEnableAcceleratedVideo);
++#else
+       command_line->HasSwitch(switches::kDisableAcceleratedVideoDecode);
++#endif
+   gpu_preferences.disable_accelerated_video_encode =
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++      !command_line->HasSwitch(switches::kEnableAcceleratedVideo);
++#else
+       command_line->HasSwitch(switches::kDisableAcceleratedVideoEncode);
++#endif
+ #if defined(OS_WIN)
+   uint32_t enable_accelerated_vpx_decode_val =
+       gpu::GpuPreferences::VPX_VENDOR_MICROSOFT;
+diff --git content/public/common/content_switches.cc content/public/common/content_switches.cc
+index 049f139bc7f7..9bbaa971fac0 100644
+--- content/public/common/content_switches.cc
++++ content/public/common/content_switches.cc
+@@ -64,6 +64,11 @@ const char kDisable3DAPIs[]                 = "disable-3d-apis";
+ // Disable gpu-accelerated 2d canvas.
+ const char kDisableAccelerated2dCanvas[]    = "disable-accelerated-2d-canvas";
+ 
++#if defined(OS_LINUX)
++// Enables hardware acceleration of video for Linux only. VA-API driver
++// is required to be present on the system installation.
++const char kEnableAcceleratedVideo[] = "enable-accelerated-video";
++#endif
+ // Disables hardware acceleration of video decode, where available.
+ const char kDisableAcceleratedVideoDecode[] =
+     "disable-accelerated-video-decode";
+@@ -853,11 +858,13 @@ const char kWaitForDebuggerChildren[]       = "wait-for-debugger-children";
+ // ignores this switch on its stable and beta channels.
+ const char kDisableWebRtcEncryption[]      = "disable-webrtc-encryption";
+ 
++#if defined(OS_CHROMEOS)
+ // Disables HW decode acceleration for WebRTC.
+ const char kDisableWebRtcHWDecoding[]       = "disable-webrtc-hw-decoding";
+ 
+ // Disables HW encode acceleration for WebRTC.
+ const char kDisableWebRtcHWEncoding[] = "disable-webrtc-hw-encoding";
++#endif
+ 
+ // Enables negotiation of GCM cipher suites from RFC 7714 for SRTP in WebRTC.
+ // See https://tools.ietf.org/html/rfc7714 for further information.
+diff --git content/public/common/content_switches.h content/public/common/content_switches.h
+index 081af901e810..a0bca59313a7 100644
+--- content/public/common/content_switches.h
++++ content/public/common/content_switches.h
+@@ -102,6 +102,9 @@ CONTENT_EXPORT extern const char kDisableZeroCopyDxgiVideo[];
+ CONTENT_EXPORT extern const char kDomAutomationController[];
+ extern const char kDisable2dCanvasClipAntialiasing[];
+ CONTENT_EXPORT extern const char kDumpBlinkRuntimeCallStats[];
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++CONTENT_EXPORT extern const char kEnableAcceleratedVideo[];
++#endif
+ CONTENT_EXPORT extern const char kEnableAccessibilityObjectModel[];
+ CONTENT_EXPORT extern const char kEnableAggressiveDOMStorageFlushing[];
+ CONTENT_EXPORT extern const char kEnableAutomation[];
+@@ -239,8 +242,10 @@ CONTENT_EXPORT extern const char kValidateInputEventStream[];
+ CONTENT_EXPORT extern const char kWaitForDebuggerChildren[];
+ 
+ CONTENT_EXPORT extern const char kDisableWebRtcEncryption[];
++#if defined(OS_CHROMEOS)
+ CONTENT_EXPORT extern const char kDisableWebRtcHWDecoding[];
+ CONTENT_EXPORT extern const char kDisableWebRtcHWEncoding[];
++#endif
+ CONTENT_EXPORT extern const char kEnableWebRtcSrtpAesGcm[];
+ CONTENT_EXPORT extern const char kEnableWebRtcSrtpEncryptedHeaders[];
+ CONTENT_EXPORT extern const char kEnableWebRtcStunOrigin[];
+diff --git content/renderer/media/webrtc/peer_connection_dependency_factory.cc content/renderer/media/webrtc/peer_connection_dependency_factory.cc
+index 2d2cfb2223c1..80d5f01ac081 100644
+--- content/renderer/media/webrtc/peer_connection_dependency_factory.cc
++++ content/renderer/media/webrtc/peer_connection_dependency_factory.cc
+@@ -276,10 +276,18 @@ void PeerConnectionDependencyFactory::InitializeSignalingThread(
+ 
+   const base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
+   if (gpu_factories && gpu_factories->IsGpuVideoAcceleratorEnabled()) {
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++    if (cmd_line->HasSwitch(switches::kEnableAcceleratedVideo))
++#else
+     if (!cmd_line->HasSwitch(switches::kDisableWebRtcHWDecoding))
++#endif
+       decoder_factory.reset(new RTCVideoDecoderFactory(gpu_factories));
+ 
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++    if (cmd_line->HasSwitch(switches::kEnableAcceleratedVideo))
++#else
+     if (!cmd_line->HasSwitch(switches::kDisableWebRtcHWEncoding))
++#endif
+       encoder_factory.reset(new RTCVideoEncoderFactory(gpu_factories));
+   }
+ 
+diff --git content/renderer/render_thread_impl.cc content/renderer/render_thread_impl.cc
+index b36daaee097a..4bb9810b5f7d 100644
+--- content/renderer/render_thread_impl.cc
++++ content/renderer/render_thread_impl.cc
+@@ -1415,7 +1415,11 @@ media::GpuVideoAcceleratorFactories* RenderThreadImpl::GetGpuFactories() {
+           kGpuStreamPriorityMedia);
+ 
+   const bool enable_video_accelerator =
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++      cmd_line->HasSwitch(switches::kEnableAcceleratedVideo) &&
++#else
+       !cmd_line->HasSwitch(switches::kDisableAcceleratedVideoDecode) &&
++#endif
+       (gpu_channel_host->gpu_feature_info()
+            .status_values[gpu::GPU_FEATURE_TYPE_ACCELERATED_VIDEO_DECODE] ==
+        gpu::kGpuFeatureStatusEnabled);
+diff --git gpu/config/software_rendering_list.json gpu/config/software_rendering_list.json
+index 445953a64237..0aac9ddb6540 100644
+--- gpu/config/software_rendering_list.json
++++ gpu/config/software_rendering_list.json
+@@ -373,17 +373,6 @@
+         "all"
+       ]
+     },
+-    {
+-      "id": 48,
+-      "description": "Accelerated video decode is unavailable on Linux",
+-      "cr_bugs": [137247],
+-      "os": {
+-        "type": "linux"
+-      },
+-      "features": [
+-        "accelerated_video_decode"
+-      ]
+-    },
+     {
+       "id": 50,
+       "description": "Disable VMware software renderer on older Mesa",
+diff --git media/base/media_switches.cc media/base/media_switches.cc
+index 684c1d5cf772..ccb561aa4ca6 100644
+--- media/base/media_switches.cc
++++ media/base/media_switches.cc
+@@ -108,10 +108,15 @@ const char kUseFileForFakeAudioCapture[] = "use-file-for-fake-audio-capture";
+ // accelerator hardware to be present.
+ const char kUseFakeJpegDecodeAccelerator[] = "use-fake-jpeg-decode-accelerator";
+ 
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++// Enable hardware accelerated mjpeg decode on linux
++const char kEnableAcceleratedMjpegDecode[] = "enable-accelerated-mjpeg-decode";
++#else
+ // Disable hardware acceleration of mjpeg decode for captured frame, where
+ // available.
+ const char kDisableAcceleratedMjpegDecode[] =
+     "disable-accelerated-mjpeg-decode";
++#endif
+ 
+ // When running tests on a system without the required hardware or libraries,
+ // this flag will cause the tests to fail. Otherwise, they silently succeed.
+@@ -460,15 +465,22 @@ const base::Feature kPreloadMediaEngagementData{
+ #endif
+ 
+ bool IsVideoCaptureAcceleratedJpegDecodingEnabled() {
++
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
++  if (!base::CommandLine::ForCurrentProcess()->HasSwitch(
++          switches::kEnableAcceleratedMjpegDecode)
++#else
+   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+-          switches::kDisableAcceleratedMjpegDecode)) {
++          switches::kDisableAcceleratedMjpegDecode)
++#endif
++          ) {
+     return false;
+   }
+   if (base::CommandLine::ForCurrentProcess()->HasSwitch(
+           switches::kUseFakeJpegDecodeAccelerator)) {
+     return true;
+   }
+-#if defined(OS_CHROMEOS)
++#if !defined(OS_ANDROID) && defined(OS_LINUX)
+   return true;
+ #endif
+   return false;
+diff --git media/base/media_switches.h media/base/media_switches.h
+index e61800cf7ab4..9f65e2af3379 100644
+--- media/base/media_switches.h
++++ media/base/media_switches.h
+@@ -64,7 +64,11 @@ MEDIA_EXPORT extern const char kUseFakeDeviceForMediaStream[];
+ MEDIA_EXPORT extern const char kUseFileForFakeVideoCapture[];
+ MEDIA_EXPORT extern const char kUseFileForFakeAudioCapture[];
+ MEDIA_EXPORT extern const char kUseFakeJpegDecodeAccelerator[];
++#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
++MEDIA_EXPORT extern const char kEnableAcceleratedMjpegDecode[];
++#else
+ MEDIA_EXPORT extern const char kDisableAcceleratedMjpegDecode[];
++#endif
+ 
+ MEDIA_EXPORT extern const char kRequireAudioHardwareForTesting[];
+ MEDIA_EXPORT extern const char kMuteAudio[];
+diff --git media/gpu/BUILD.gn media/gpu/BUILD.gn
+index 9ef4730a4260..b650e83bb05d 100644
+--- media/gpu/BUILD.gn
++++ media/gpu/BUILD.gn
+@@ -501,6 +501,14 @@ if (use_v4l2_codec || use_vaapi || is_mac || is_win) {
+   }
+ }
+ 
++if (is_desktop_linux && use_vaapi) {
++  import("//build/config/linux/pkg_config.gni")
++
++  pkg_config("libva_config") {
++    packages = [ "libva" ]
++  }
++}
++
+ if (use_vaapi) {
+   test("jpeg_encode_accelerator_unittest") {
+     deps = [
+@@ -571,6 +579,10 @@ if (use_v4l2_codec || use_vaapi) {
+     if (use_ozone) {
+       deps += [ "//ui/ozone" ]
+     }
++
++    if (is_desktop_linux) {
++      public_configs = [ ":libva_config" ]
++    }
+   }
+ }
+ 

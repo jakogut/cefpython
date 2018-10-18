@@ -1,0 +1,12 @@
+diff --git tools/cfi/blacklist.txt tools/cfi/blacklist.txt
+index 761574a5adbd..bffce270d94f 100644
+--- tools/cfi/blacklist.txt
++++ tools/cfi/blacklist.txt
+@@ -143,6 +143,7 @@ fun:*FunctorTraits*
+ 
+ # Calls to auto-generated stubs by generate_stubs.py
+ src:*audio/pulse/pulse_stubs.cc
++src:*media/gpu/vaapi/va_stubs.cc
+ 
+ # Calls to auto-generated stubs by generate_library_loader.py
+ src:*chrome/browser/speech/tts_linux.cc
