@@ -445,19 +445,22 @@ def get_version_from_command_line_args(caller_script, ignore_error=False):
 
 def get_cefpython_version():
     """Get CEF version from the 'src/version/' directory."""
-    header_file = os.path.join(SRC_DIR, "version",
+    version_file = os.path.join(SRC_DIR, "version",
                                "cef_version_"+OS_POSTFIX+".h")
-    return get_version_from_file(header_file)
+    api_hash_file = os.path.join(SRC_DIR, "version",
+                                "cef_api_hash.h")
+    return get_version_from_file(version_file, api_hash_file)
 
 
-def get_version_from_file(header_file):
-    with open(header_file, "rU") as fp:
-        contents = fp.read()  # no need to decode() as "rU" specified
+def get_version_from_file(version_file, api_hash_file):
     ret = dict()
-    matches = re.findall(r'^#define (\w+) "?([^\s"]+)"?', contents,
-                         re.MULTILINE)
-    for match in matches:
-        ret[match[0]] = match[1]
+    for header_file in [version_file, api_hash_file]:
+        with open(header_file, "rU") as fp:
+            contents = fp.read()  # no need to decode() as "rU" specified
+        matches = re.findall(r'^#define (\w+) "?([^\s"]+)"?', contents,
+                             re.MULTILINE)
+        for match in matches:
+            ret[match[0]] = match[1]
     return ret
 
 

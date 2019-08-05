@@ -51,7 +51,7 @@ cdef public cpp_bool RenderHandler_GetRootScreenRect(
         (exc_type, exc_value, exc_trace) = sys.exc_info()
         sys.excepthook(exc_type, exc_value, exc_trace)
 
-cdef public cpp_bool RenderHandler_GetViewRect(
+cdef public void RenderHandler_GetViewRect(
         CefRefPtr[CefBrowser] cefBrowser,
         CefRect& cefRect
         ) except * with gil:
@@ -69,11 +69,6 @@ cdef public cpp_bool RenderHandler_GetViewRect(
                 cefRect.y = pyRect[1]
                 cefRect.width = pyRect[2]
                 cefRect.height = pyRect[3]
-                return True
-            else:
-                return False
-        else:
-            return False
     except:
         (exc_type, exc_value, exc_trace) = sys.exc_info()
         sys.excepthook(exc_type, exc_value, exc_trace)

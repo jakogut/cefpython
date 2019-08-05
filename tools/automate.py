@@ -723,7 +723,8 @@ def create_prebuilt_binaries():
     # Directories
     src = Options.cef_binary
     version_header = os.path.join(src, "include", "cef_version.h")
-    dst = get_prebuilt_name(version_header)
+    api_hash_header = os.path.join(src, "include", "cef_api_hash.h")
+    dst = get_prebuilt_name(version_header, api_hash_header)
     dst = os.path.join(Options.build_dir, dst)
     rmdir(dst)
     os.makedirs(dst)
@@ -912,8 +913,8 @@ def getenv():
     # Issue #73 patch applied here with "use_allocator=none"
     env["GN_DEFINES"] = "use_sysroot=true use_allocator=none symbol_level=0 treat_warnings_as_errors=false"
 
-    # Enable VAAPI
-    env["GN_DEFINES"] += " use_vaapi=true"
+    # Uncomment to enable VAAPI
+    # env["GN_DEFINES"] += " use_vaapi=true"
 
     # Use ccache for faster (re)builds
     if Options.use_ccache:
@@ -1086,9 +1087,9 @@ def onerror(func, path, _):
         raise Exception("Not a file permission error, dunno what to do")
 
 
-def get_prebuilt_name(header_file=""):
-    if header_file:
-        version = get_version_from_file(header_file)
+def get_prebuilt_name(header_file="", api_hash_file=""):
+    if header_file and api_hash_file:
+        version = get_version_from_file(header_file, api_hash_file)
     else:
         version = get_cefpython_version()
     postfix2 = OS_POSTFIX2

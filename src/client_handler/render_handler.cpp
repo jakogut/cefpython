@@ -13,7 +13,7 @@ bool RenderHandler::GetRootScreenRect(CefRefPtr<CefBrowser> browser,
 }
 
 
-bool RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser,
+void RenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser,
                                 CefRect& rect)
 {
     REQUIRE_UI_THREAD();

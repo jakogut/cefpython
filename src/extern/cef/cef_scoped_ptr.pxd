@@ -4,14 +4,14 @@
 
 cdef extern from "include/base/cef_scoped_ptr.h":
     cdef cppclass scoped_ptr[T]:
-        scoped_ptr()
+        scoped_ptr() nogil
         # noinspection PyUnresolvedReferences
-        scoped_ptr(T* p)
+        scoped_ptr(T* p) nogil
         # noinspection PyUnresolvedReferences
-        void reset()
+        void reset() nogil
         # noinspection PyUnresolvedReferences
-        void reset(T* p)
+        void reset(T* p) nogil
         # noinspection PyUnresolvedReferences
-        T* get()
+        T* get() nogil
         # noinspection PyUnresolvedReferences
-        scoped_ptr[T]& Assign "operator="(scoped_ptr[T] p)
+        scoped_ptr[T]& Assign "operator="(scoped_ptr[T] p) nogil

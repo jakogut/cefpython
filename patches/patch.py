@@ -33,12 +33,8 @@ if OS_POSTFIX == "linux":
             'name': 'disable_Werror',
             'path': 'cef/'
         },
-        {
-            'name': 'cfi-vaapi-fix',
-            'path': '.',
-        },
-        {
-            'name': 'vaapi',
-            'path': '.',
-        },
+        #{
+        #    'name': 'vaapi',
+        #    'path': '.',
+        #},
     ])
